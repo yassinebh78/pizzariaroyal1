@@ -1083,7 +1083,8 @@ h1 {
     }, 100);
   }, { passive: true });
 })();
-const TABLE_NUMBER = 5;
+const params = new URLSearchParams(window.location.search);
+const TABLE_NUMBER = params.get('table') || '?';
 const BOT_TOKEN = "8649775029:AAGyb7T61wK7u0ik3Obz1VfXblxehauwa70";
 const CHAT_ID = "5475176909";
 
