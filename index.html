@@ -206,51 +206,6 @@ h1 {
   }
 }
 
-/* Back to top button */
-.back-to-top {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--main);
-  color: #fff;
-  border: none;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s, transform 0.3s;
-  pointer-events: none;
-  float:left
-}
-
-.back-to-top.show {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.back-to-top:hover {
-  background: var(--main-dark);
-}
-
-.back-to-top:active {
-  transform: scale(0.9);
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  body {
-    padding: 12px;
-    padding-top: calc(var(--nav-height) + 12px);
-  }
 
   .nav {
     padding: 0 10px;
@@ -1030,8 +985,6 @@ h1 {
   🔔 Appeler le serveur
 </button>
 
-<!-- Back to top button -->
-<button class="back-to-top" aria-label="Retour en haut" onclick="window.scrollTo({top:0})">&#8593;</button>
 <!-- Cart Floating Button -->
 <button class="cart-float-btn" onclick="openCart()">
   🛒
