@@ -1030,20 +1030,6 @@ h1 {
     }
   }
 
-  // Back to top button visibility
-  let btn = document.querySelector('.back-to-top');
-  let scrollTimer;
-  window.addEventListener('scroll', function() {
-    if (scrollTimer) return;
-    scrollTimer = setTimeout(function() {
-      scrollTimer = null;
-      if (window.scrollY > 400) {
-        btn.classList.add('show');
-      } else {
-        btn.classList.remove('show');
-      }
-    }, 100);
-  }, { passive: true });
 
   // Highlight active nav link on scroll
   let navLinks = document.querySelectorAll('.nav a');
