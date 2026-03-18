@@ -66,26 +66,6 @@ body {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
-#callWaiter{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  height: var(--nav-height);
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  gap: 6px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
 
 .nav::-webkit-scrollbar {
   display: none;
@@ -227,6 +207,28 @@ h1 {
 }
 
 /* Back to top button */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--main);
+  color: #fff;
+  border: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
 
 .back-to-top.show {
   opacity: 1;
@@ -308,6 +310,7 @@ h1 {
     transition: none;
   }
 }
+
 /* Floating Call Waiter Button */
 .call-waiter-btn {
   position: fixed;
@@ -334,6 +337,7 @@ h1 {
 .call-waiter-btn:active {
   transform: scale(0.95);
 }
+
 .add-btn {
   color:#fff;
   border-color: var(--price);
@@ -349,6 +353,7 @@ h1 {
 }
 
 .add-btn:active { transform: scale(0.9); }
+
 /* Floating cart button */
 .cart-float-btn {
   position: fixed;
@@ -368,6 +373,7 @@ h1 {
   align-items: center;
   justify-content: center;
 }
+
 #cart-badge {
   position: absolute;
   top: -4px;
@@ -400,6 +406,7 @@ h1 {
   transition: opacity 0.3s, transform 0.3s;
   z-index: 1000;
 }
+
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
@@ -415,6 +422,7 @@ h1 {
   align-items: flex-end;
   justify-content: center;
 }
+
 .modal-box {
   background: #fff;
   width: 100%;
@@ -424,13 +432,16 @@ h1 {
   max-height: 80vh;
   overflow-y: auto;
 }
+
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
+
 .modal-header h2 { font-size: 18px; }
+
 .close-btn {
   background: #eee;
   border: none;
@@ -440,6 +451,7 @@ h1 {
   font-size: 15px;
   cursor: pointer;
 }
+
 .cart-row {
   display: flex;
   justify-content: space-between;
@@ -448,12 +460,15 @@ h1 {
   border-bottom: 1px solid #f0f0f0;
   gap: 8px;
 }
+
 .cart-name { flex: 1; font-size: 14px; font-weight: 600; }
+
 .cart-qty-ctrl {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .cart-qty-ctrl button {
   background: var(--bg);
   border: 1px solid #ddd;
@@ -464,8 +479,11 @@ h1 {
   cursor: pointer;
   line-height: 1;
 }
+
 .cart-price { font-weight: 700; color: var(--price); font-size: 14px; min-width: 50px; text-align: right; }
+
 .cart-total { text-align: right; padding: 14px 0 4px; font-size: 15px; }
+
 .send-order-btn {
   width: 100%;
   margin-top: 14px;
@@ -477,13 +495,31 @@ h1 {
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
+
 .send-order-btn:hover { background: var(--main-dark); }
+.send-order-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Order notes textarea */
+.order-notes {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  margin-top: 10px;
+}
 </style>
 </head>
 
 <body>
-
 <!-- Sticky Navigation -->
 <nav class="nav" aria-label="Menu sections">
   <a href="#pizzas">🍕 Pizzas</a>
@@ -494,499 +530,501 @@ h1 {
 </nav>
 
 <div class="container">
+  <h1>Pizza Royal</h1>
 
-<h1>Pizza Royal</h1>
-
-<!-- PIZZAS -->
-<div class="section" id="pizzas">
-  <div class="section-title">🍕 Pizzas <span>Mini    /   Moyenne</span></div>
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Margherita</h3>
-      <p>Sauce tomate, fromage, origan, olives</p>
+  <!-- PIZZAS -->
+  <div class="section" id="pizzas">
+    <div class="section-title">🍕 Pizzas <span>Mini    /   Moyenne</span></div>
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Margherita</h3>
+        <p>Sauce tomate, fromage, origan, olives</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">6.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Margherita (Mini)', 6.5)">+</button>
+        <div class="price">11DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Margherita (Moy)', 11)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">6.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Margherita (Mini)', 6.5)">+</button>
-    <div class="price">11DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Margherita (Moy)', 11)">+</button>
-  </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Thon</h3>
+        <p>Sauce tomate, thon, fromage, olives, poivron, oignon, origan, œuf</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">7DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('pizza thon (Mini)', 7)">+</button>
+        <div class="price">13DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('pizza Thon (Moy)', 13)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Orientale</h3>
+        <p>Sauce tomate, fromage, erguez, poivron, oignon, origan</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Orientale (Mini)', 8.5)">+</button>
+        <div class="price">14DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Orientale (Moy)', 14)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Calzone</h3>
+        <p>Sauce tomate, fromage, olives, oignon, salami, origan</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">7DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Calzone (Mini)', 7)">+</button>
+        <div class="price">13DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Calzone (Moy)', 13)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Regina</h3>
+        <p>Sauce tomate, thon, salami, fromage, olives, origan</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">7.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Regina (Mini)', 7.5)">+</button>
+        <div class="price">14DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Regina (Moy)', 14)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>4 saisons</h3>
+        <p>Sauce tomate, fromage, champignons, olives, poivron, oignon, œuf, thon</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('pizza 4 saisons (Mini)', 8.5)">+</button>
+        <div class="price">15DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('pizza 4 saisons (Moy)', 15)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Viande Hachée</h3>
+        <p>Sauce tomate, fromage, olives, viande hachée, oignon, origan, poivron</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">11DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Viande Hachée (Mini)', 11)">+</button>
+        <div class="price">23DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Viande Hachée (Moy)', 23)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Royal</h3>
+        <p>Sauce tomate, fromage, salami, merguez, oignon, poivron, champignon, œuf, olives, origan</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">9DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Royal (Mini)', 9)">+</button>
+        <div class="price">17DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Royal (Moy)', 17)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Escalope</h3>
+        <p>Sauce tomate, fromage, escalope, merguez, oignon, poivron, champignon, œuf, olives, origan</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">9DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Escalope (Mini)', 9)">+</button>
+        <div class="price">17DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza Escalope (Moy)', 17)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>4 fromages</h3>
+        <p>Sauce tomate, fromage, 4 fromages, olives</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza 4 fromages (Mini)', 8.5)">+</button>
+        <div class="price">16DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Pizza 4 fromages (Moy)', 16)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Fruits de mer</h3>
+        <p>Sauce tomate, fromage, fruits de mer, origan, olives</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">11DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Fruits de mer (Mini)', 11)">+</button>
+        <div class="price">23DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Fruits de mer (Moy)', 23)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Galette Thon</h3>
+        <p>Sauce tomate, fromage, origan, poivron, thon, oignon</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">7.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Galette Thon (Mini)', 7.5)">+</button>
+        <div class="price">13.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Galette Thon (Moy)', 13.5)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Galette Escalope</h3>
+        <p>Sauce tomate, fromage, origan, poivron, escalope, oignon</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">9DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Galette Escalope (Mini)', 9)">+</button>
+        <div class="price">17DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Galette Escalope (Moy)', 17)">+</button>
+      </div>
+    </div>
   </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Thon</h3>
-      <p>Sauce tomate, thon, fromage, olives, poivron, oignon, origan, œuf</p>
+  <!-- SANDWICHES -->
+  <div class="section" id="sandwiches">
+    <div class="section-title">🥪 Sandwiches Tabouna</div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Oeuf</h3>
+        <p>Harissa, salade, salade mechouia, frites, olives</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">4DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich Oeuf', 4)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">7DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('pizza thon (Mini)', 7)">+</button>
-    <div class="price">13DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('pizza Thon (Moy)', 13)">+</button>
-  </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Thon</h3>
+        <p>Harissa, salade mechouia, thon, frites, olives</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">6DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich Thon', 6)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Salami</h3>
+        <p>Harissa, salade, salade mechouia, salami, frites, olives</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">4.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich Salami', 4.5)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Thon + Oeuf</h3>
+        <p>Harissa, salade mechouia, thon, frites, olives, oeuf</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">6.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich Thon+Oeuf', 6.5)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Salami + Oeuf</h3>
+        <p>Harissa, salade mechouia, salami, frites, olives, oeuf</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">5.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich salami+Oeuf', 5.5)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Thon + Salami</h3>
+        <p>Harissa, salade mechouia, thon, salami, frites, olives</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">6.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich Thon+Salami', 6.5)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Merguez</h3>
+        <p>Harissa, salade mechouia, merguez, frites, olives, oeuf</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">7DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich Merguez', 7)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Escalope</h3>
+        <p>Harissa, salade mechouia, escalope, frites, olives, oeuf</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">7DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich Escalope', 7)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Sandwich Chawarma</h3>
+        <p>Harissa, salade mechouia, chawarma, frites, olives, oeuf</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">7DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Sandwich Chawarma', 7)">+</button>
+      </div>
+    </div>
   </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Orientale</h3>
-      <p>Sauce tomate, fromage, erguez, poivron, oignon, origan</p>
+  <!-- LIBANAIS -->
+  <div class="section" id="libanais">
+    <div class="section-title">🌯 Libanais</div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Libanais Escalope</h3>
+        <p>Harissa, salade mechouia, escalope, fromage, frites</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('libanais Escalope', 8)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Orientale (Mini)', 8.5)">+</button>
-    <div class="price">14DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Orientale (Moy)', 14)">+</button>
-  </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Makloub</h3>
+        <p>Double fromage, harissa, salade mechouia, escalope, frites</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('ma9loub', 8.5)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Baguette Farcie</h3>
+        <p>Double fromage, harissa, salade mechouia, escalope, frites</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">14DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Baguette Farcie', 14)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Mini Baguette Farcie</h3>
+        <p>Double fromage, harissa, salade mechouia, escalope, frites</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Mini Baguette Farcie', 8)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3 class="c2">CHICKEN CHICKA</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('CHICKEN CHICKA', 8)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3 class="c2">TACOS</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('TACOS', 8)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3 class="c2">CHEESE NAAN</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">8DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('CHEESE NAAN', 8)">+</button>
+      </div>
+    </div>
   </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Calzone</h3>
-      <p>Sauce tomate, fromage, olives, oignon, salami, origan</p>
+  <!-- PLATS -->
+  <div class="section" id="plats">
+    <div class="section-title">🍽️ Plats</div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Thon Oeuf</h3>
+        <p>Harissa, salade mechouia, oeuf, frites, olives, thon</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">9DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Plats Thon Oeuf', 9)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">7DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Calzone (Mini)', 7)">+</button>
-    <div class="price">13DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Calzone (Moy)', 13)">+</button>
-  </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Escalope</h3>
+        <p>Harissa, salade mechouia, oeuf, frites, olives, escalope</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">12DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Plats Escalope', 12)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Chawarma</h3>
+        <p>Harissa, salade mechouia, oeuf, frites, olives, chawarma</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">12DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Plats Chawarma', 12)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Merguez</h3>
+        <p>Harissa, salade mechouia, oeuf, frites, olives, merguez</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">12DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Plats Merguez', 12)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Mixte</h3>
+        <p>Harissa, salade mechouia, oeuf, frites, olives, escalope, chawarma, merguez</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">12DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Plats Mixte', 12)">+</button>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Escalope Pané</h3>
+        <p>Harissa, salade mechouia, oeuf, frites, olives, escalope pané</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">12DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Plats Escalope Pané', 12)">+</button>
+      </div>
+    </div>
   </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Regina</h3>
-      <p>Sauce tomate, thon, salami, fromage, olives, origan</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">7.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Regina (Mini)', 7.5)">+</button>
-    <div class="price">14DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Regina (Moy)', 14)">+</button>
-  </div>
-  </div>
+  <!-- BOISSONS -->
+  <div class="section" id="boissons">
+    <div class="section-title">🥤 Boissons</div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>4 saisons</h3>
-      <p>Sauce tomate, fromage, champignons, olives, poivron, oignon, œuf, thon</p>
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Coca Standard</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">1.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Coca Standard', 1.5)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('pizza 4 saisons (Mini)', 8.5)">+</button>
-    <div class="price">15DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('pizza 4 saisons (Moy)', 15)">+</button>
-  </div>
-  </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Viande Hachée</h3>
-      <p>Sauce tomate, fromage, olives, viande hachée, oignon, origan, poivron</p>
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Coca Canette</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">2.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Coca Canette', 2.5)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">11DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Viande Hachée (Mini)', 11)">+</button>
-    <div class="price">23DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Viande Hachée (Moy)', 23)">+</button>
-  </div>
-  </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Royal</h3>
-      <p>Sauce tomate, fromage, salami, merguez, oignon, poivron, champignon, œuf, olives, origan</p>
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Coca 1L</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">3.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Coca 1L', 3.5)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">6.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Royal (Mini)', 9)">+</button>
-    <div class="price">11DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Royal (Moy)', 17)">+</button>
-  </div>
-  </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Escalope</h3>
-      <p>Sauce tomate, fromage, escalope, merguez, oignon, poivron, champignon, œuf, olives, origan</p>
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Oh jus 0.5L</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">2.5DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Oh jus 0.5L', 2.5)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">6.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Escalope (Mini)', 9)">+</button>
-    <div class="price">11DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza Escalope (Moy)', 17)">+</button>
-  </div>
-  </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>4 fromages</h3>
-      <p>Sauce tomate, fromage, 4 fromages, olives</p>
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Eau 0.5L</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">1DT</div>
+        <button class="add-btn size-btn" onclick="addToCart('Eau 0.5L', 1)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza 4 fromages (Mini)', 8.5)">+</button>
-    <div class="price">16DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Pizza 4 fromages (Moy)', 16)">+</button>
-  </div>
-  </div>
 
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Fruits de mer</h3>
-      <p>Sauce tomate, fromage, fruits de mer, origan, olives</p>
+    <div class="menu-item">
+      <div class="item-info">
+        <h3>Eau 1.5L</h3>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="price">2DT</div> <!-- Fixed: Was showing 1.5DT but adding 2 -->
+        <button class="add-btn size-btn" onclick="addToCart('Eau 1.5L', 2)">+</button>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">11DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Fruits de mer (Mini)', 11)">+</button>
-    <div class="price">23DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Fruits de mer (Moy)', 23)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Galette Thon</h3>
-      <p>Sauce tomate, fromage, origan, poivron, thon, oignon</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">7.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Galette Thon (Mini)', 7.5)">+</button>
-    <div class="price">13.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Galette Thon (Moy)', 13.5)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Galette Escalope</h3>
-      <p>Sauce tomate, fromage, origan, poivron, escalope, oignon</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">9DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Galette Escalope (Mini)', 9)">+</button>
-    <div class="price">17DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Galette Escalope (Moy)', 17)">+</button>
-  </div>
   </div>
 </div>
 
-<!-- SANDWICHES -->
-<div class="section" id="sandwiches">
-  <div class="section-title">🥪 Sandwiches Tabouna</div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Oeuf</h3>
-      <p>Harissa, salade, salade mechouia, frites, olives</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">4DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich Oeuf', 4)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Thon</h3>
-      <p>Harissa, salade mechouia, thon, frites, olives</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">6DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich Thon', 6)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Salami</h3>
-      <p>Harissa, salade, salade mechouia, salami, frites, olives</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">4.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich Salami', 4.5)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Thon + Oeuf</h3>
-      <p>Harissa, salade mechouia, thon, frites, olives, oeuf</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">6.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich Thon+Oeuf', 6.5)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Salami + Oeuf</h3>
-      <p>Harissa, salade mechouia, salami, frites, olives, oeuf</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">5.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich salami+Oeuf', 5.5)">+</button>
-  </div>
-  </div>
-
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Thon + Salami</h3>
-      <p>Harissa, salade mechouia, thon, salami, frites, olives</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">6.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich Thon+Salami', 6.5)">+</button>
-  </div>
-  </div>
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Merguez</h3>
-      <p>Harissa, salade mechouia, merguez, frites, olives, oeuf</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">7DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich Merguez', 7)">+</button>
-  </div>
-  </div>
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Escalope</h3>
-      <p>Harissa, salade mechouia, escalope, frites, olives, oeuf</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">7DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich Escalope', 7)">+</button>
-  </div>
-  </div>
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Sandwich Chawarma</h3>
-      <p>Harissa, salade mechouia, chawarma, frites, olives, oeuf</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">7DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Sandwich Thon+Salami', 7)">+</button>
-  </div>
-  </div>
-</div>
-
-<!-- LIBANAIS -->
-<div class="section" id="libanais">
-  <div class="section-title">🌯 Libanais</div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Libanais Escalope</h3>
-      <p>Harissa, salade mechouia, escalope, fromage, frites</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('libanais Escalope', 8)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Makloub</h3>
-      <p>Double fromage, harissa, salade mechouia, escalope, frites</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('ma9loub', 8.5)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Baguette Farcie</h3>
-      <p>Double fromage, harissa, salade mechouia, escalope, frites</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">14DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Baguette Farcie', 14)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Mini Baguette Farcie</h3>
-      <p>Double fromage, harissa, salade mechouia, escalope, frites</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Mini Baguette Farcie', 8)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3 class="c2">CHICKEN CHICKA</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('CHICKEN CHICKA', 8)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3 class="c2">TACOS</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('TACOS', 8)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3 class="c2">CHEESE NAAN</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">8DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('CHEESE NAAN', 8)">+</button>
-  </div>
-  </div>
-</div>
-
-<!-- PLATS -->
-<div class="section" id="plats">
-  <div class="section-title">🍽️ Plats</div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Thon Oeuf</h3>
-      <p>Harissa, salade mechouia, oeuf, frites, olives, thon</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">9DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Plats Thon Oeuf', 9)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Escalope</h3>
-      <p>Harissa, salade mechouia, oeuf, frites, olives, escalope</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">12DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Plats Escalope', 12)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Chawarma</h3>
-      <p>Harissa, salade mechouia, oeuf, frites, olives, chawarma</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">12DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Plats Chawarma', 12)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Merguez</h3>
-      <p>Harissa, salade mechouia, oeuf, frites, olives, merguez</p>
-    </div>
-   <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">12DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Plats Merguez', 12)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Mixte</h3>
-      <p>Harissa, salade mechouia, oeuf, frites, olives, escalope, chawarma, merguez</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">12DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Plats Mixte', 12)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Escalope Pané</h3>
-      <p>Harissa, salade mechouia, oeuf, frites, olives, escalope pané</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">12DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Plats Escalope Pané', 12)">+</button>
-  </div>
-  </div>
-</div>
-
-<!-- BOISSONS -->
-<div class="section" id="boissons">
-  <div class="section-title">🥤 Boissons</div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Coca Standard</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">1.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Coca Standard', 1.5)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Coca Canette</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">2.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Coca Canette', 2.5)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Coca 1L</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">3.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Coca 1L', 3.5)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Oh jus 0.5L</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">2.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Oh jus 0.5L', 2.5)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Eau 0.5L</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">1DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Eau 0.5L', 1)">+</button>
-  </div>
-  </div>
-
-  <div class="menu-item">
-    <div class="item-info">
-      <h3>Eau 1.5L</h3>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <div class="price">1.5DT</div>
-    <button class="add-btn size-btn" onclick="addToCart('Eau 1.5L', 2)">+</button>
-  </div>
-  </div>
-</div>
-</div>
 <button class="call-waiter-btn" onclick="callWaiter()">
   🔔 Appeler le serveur
 </button>
@@ -1010,35 +1048,41 @@ h1 {
       <button onclick="closeCart()" class="close-btn">✕</button>
     </div>
     <div id="cart-body"></div>
-    <button class="send-order-btn" onclick="sendOrder()">📤 Envoyer la commande</button>
+    <!-- Order notes field -->
+    <textarea id="order-notes" class="order-notes" placeholder="Notes spéciales (ex: sans oignon, bien cuit)..."></textarea>
+    <button class="send-order-btn" id="send-order-btn" onclick="sendOrder()">📤 Envoyer la commande</button>
   </div>
 </div>
+
 <script>
+// Secure endpoint - REPLACE THIS WITH YOUR OWN BACKEND URL
+const SECURE_ENDPOINT = '/api/send-telegram-message'; // Example: https://yourdomain.com/api/telegram
+
 // Intersection Observer for scroll-reveal animations
 (function() {
-  var sections = document.querySelectorAll('.section');
+  const sections = document.querySelectorAll('.section');
   if ('IntersectionObserver' in window) {
-    var observer = new IntersectionObserver(function(entries) {
-      for (var i = 0; i < entries.length; i++) {
+    const observer = new IntersectionObserver(function(entries) {
+      for (let i = 0; i < entries.length; i++) {
         if (entries[i].isIntersecting) {
           entries[i].target.classList.add('visible');
           observer.unobserve(entries[i].target);
         }
       }
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-    for (var i = 0; i < sections.length; i++) {
+    for (let i = 0; i < sections.length; i++) {
       observer.observe(sections[i]);
     }
   } else {
     // Fallback: show all sections immediately
-    for (var i = 0; i < sections.length; i++) {
+    for (let i = 0; i < sections.length; i++) {
       sections[i].classList.add('visible');
     }
   }
 
   // Back to top button visibility
-  var btn = document.querySelector('.back-to-top');
-  var scrollTimer;
+  let btn = document.querySelector('.back-to-top');
+  let scrollTimer;
   window.addEventListener('scroll', function() {
     if (scrollTimer) return;
     scrollTimer = setTimeout(function() {
@@ -1052,26 +1096,26 @@ h1 {
   }, { passive: true });
 
   // Highlight active nav link on scroll
-  var navLinks = document.querySelectorAll('.nav a');
-  var sectionIds = [];
-  for (var i = 0; i < navLinks.length; i++) {
+  let navLinks = document.querySelectorAll('.nav a');
+  let sectionIds = [];
+  for (let i = 0; i < navLinks.length; i++) {
     sectionIds.push(navLinks[i].getAttribute('href').substring(1));
   }
 
-  var navTimer;
+  let navTimer;
   window.addEventListener('scroll', function() {
     if (navTimer) return;
     navTimer = setTimeout(function() {
       navTimer = null;
-      var scrollPos = window.scrollY + 80;
-      var activeIdx = 0;
-      for (var i = 0; i < sectionIds.length; i++) {
-        var el = document.getElementById(sectionIds[i]);
+      const scrollPos = window.scrollY + 80;
+      let activeIdx = 0;
+      for (let i = 0; i < sectionIds.length; i++) {
+        let el = document.getElementById(sectionIds[i]);
         if (el && el.offsetTop <= scrollPos) {
           activeIdx = i;
         }
       }
-      for (var i = 0; i < navLinks.length; i++) {
+      for (let i = 0; i < navLinks.length; i++) {
         if (i === activeIdx) {
           navLinks[i].style.background = '#c09a1b';
           navLinks[i].style.color = '#fff';
@@ -1085,22 +1129,25 @@ h1 {
 })();
 const params = new URLSearchParams(window.location.search);
 const TABLE_NUMBER = params.get('table') || '?';
-const BOT_TOKEN = "8649775029:AAGyb7T61wK7u0ik3Obz1VfXblxehauwa70";
-const CHAT_ID = "5475176909";
+const BACKEND_URL = "https://pizza-royal-backend.onrender.com"; // ← YOUR URL HERE
 
 function callWaiter() {
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+  fetch(`${BACKEND_URL}/call-waiter`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      chat_id: CHAT_ID,
-      text: `🔔 La table ${TABLE_NUMBER} appelle le serveur.`
-    })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ table: TABLE_NUMBER })
+  })
+  .then(r => {
+    if (!r.ok) throw new Error(`Server responded ${r.status}`);
+    return r.json();
+  })
+  .then(() => {
+    alert("✅ Le serveur arrive.");
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Erreur d'envoi. Vérifiez votre connexion ou contactez le gérant.");
   });
-
-  alert("✅ Le serveur arrive.");
 }
 const cart = {};
 
@@ -1168,28 +1215,44 @@ function closeCart() {
 
 function sendOrder() {
   const keys = Object.keys(cart);
-  if (keys.length === 0) return alert("Panier vide !");
-  let msg = `🛒 Commande - Table ${TABLE_NUMBER}:\n`;
+  if (keys.length === 0) {
+    alert("Panier vide !");
+    return;
+  }
+
   let total = 0;
-  keys.forEach(name => {
+  const items = keys.map(name => {
     const item = cart[name];
     const numPrice = parseFloat(item.price);
     total += numPrice * item.qty;
-    msg += `• ${name} x${item.qty} — ${(numPrice * item.qty).toFixed(1)}DT\n`;
+    return { name: name, qty: item.qty, price: numPrice };
   });
-  msg += `\n💰 Total : ${total.toFixed(1)}DT`;
 
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+  fetch(`${BACKEND_URL}/send-order`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
-  }).then(() => {
-    alert("✅ Commande envoyée ! Le serveur prépare votre commande.");
+    body: JSON.stringify({
+      table: TABLE_NUMBER,
+      items: items,
+      total: total
+    })
+  })
+  .then(r => {
+    if (!r.ok) throw new Error("Server responded " + r.status);
+    return r.json();
+  })
+  .then(data => {
+    alert("✅ Commande #" + data.order_no + " envoyée au serveur pour validation !");
     Object.keys(cart).forEach(k => delete cart[k]);
     updateCartBadge();
     closeCart();
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Erreur d'envoi. Vérifiez votre connexion ou contactez le gérant.");
   });
 }
+
 
 </script>
 </body>
