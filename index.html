@@ -1225,13 +1225,16 @@ function sendOrder() {
     return { name: name, qty: item.qty, price: numPrice };
   });
 
+  const notes = document.getElementById('order-notes').value || '';
+
   fetch(`${BACKEND_URL}/send-order`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       table: TABLE_NUMBER,
       items: items,
-      total: total
+      total: total,
+      notes: notes          // ← send notes
     })
   })
   .then(r => {
@@ -1242,6 +1245,7 @@ function sendOrder() {
     alert("✅ Commande #" + data.order_no + " envoyée au serveur pour validation !");
     Object.keys(cart).forEach(k => delete cart[k]);
     updateCartBadge();
+    document.getElementById('order-notes').value = '';   // clear notes
     closeCart();
   })
   .catch(err => {
@@ -1249,6 +1253,7 @@ function sendOrder() {
     alert("Erreur d'envoi. Vérifiez votre connexion ou contactez le gérant.");
   });
 }
+
 
 
 </script>
