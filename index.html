@@ -1055,10 +1055,6 @@ h1 {
 </div>
 
 <script>
-// Secure endpoint - REPLACE THIS WITH YOUR OWN BACKEND URL
-const SECURE_ENDPOINT = '/api/send-telegram-message'; // Example: https://yourdomain.com/api/telegram
-
-// Intersection Observer for scroll-reveal animations
 (function() {
   const sections = document.querySelectorAll('.section');
   if ('IntersectionObserver' in window) {
@@ -1184,18 +1180,19 @@ function openCart() {
     let total = 0;
     body.innerHTML = keys.map(name => {
       const item = cart[name];
-      // Use the first price if dual pricing (e.g. "7DT / 13DT")
       const numPrice = parseFloat(item.price);
-      total += numPrice * item.qty;
+      const lineTotal = numPrice * item.qty;
+      total += lineTotal;
+      const safeName = name.replace(/'/g, "\\'");
       return `
         <div class="cart-row">
           <span class="cart-name">${name}</span>
           <div class="cart-qty-ctrl">
-            <button onclick="changeQty('${name}', -1)">−</button>
+            <button onclick="changeQty('${safeName}', -1)">−</button>
             <span>${item.qty}</span>
-            <button onclick="changeQty('${name}', 1)">+</button>
+            <button onclick="changeQty('${safeName}', 1)">+</button>
           </div>
-          <span class="cart-price">${(numPrice * item.qty).toFixed(1)}DT</span>
+          <span class="cart-price">${lineTotal.toFixed(1)}DT</span>
         </div>`;
     }).join('') + `<div class="cart-total">Total : <strong>${total.toFixed(1)}DT</strong></div>`;
   }
