@@ -1335,5 +1335,11 @@ function sendOrder() {
 }
 
 </script>
+  <div id="wait-overlay" style="display:none; position:fixed; inset:0; z-index:1000;">
+  <div style="position:absolute; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(6px);"></div>
+  <div style="position:relative; width:120px; height:120px; background:#e53935; border-radius:50%; color:white; font-size:2rem; font-weight:600; display:flex; align-items:center; justify-content:center; margin:auto;">
+    <span id="wait-time-number">--</span> min
+  </div>
+</div>
 </body>
 </html>
