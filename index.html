@@ -478,6 +478,60 @@ h1 {
   resize: vertical;
   margin-top: 10px;
 }
+/* ----- Full‑screen overlay ----- */
+#wait-overlay {
+  position: fixed;
+  inset: 0;                     /* top/right/bottom/left = 0 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;                /* above everything else */
+  visibility: hidden;           /* start hidden */
+  opacity: 0;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* When we add the .visible class, show it */
+#wait-overlay.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Blurred backdrop */
+#wait-overlay .backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);  /* dark semi‑transparent */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Red circle with white text */
+#wait-overlay .wait-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  background: #e53935;          /* Material Red 600 – change if you prefer */
+  border-radius: 50%;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Optional: subtle pulse to draw attention */
+#wait-overlay .wait-circle {
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%   { transform: scale(1);   opacity: 1; }
+  50%  { transform: scale(1.05);opacity: 0.9; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* Keep the existing cart‑modal etc. untouched – they’ll still work because the overlay sits above them */
 </style>
 </head>
 
@@ -1071,6 +1125,13 @@ h1 {
   </div>
 </div>
 
+<div id="wait-overlay" class="hidden">
+  <div class="backdrop"></div>               <!-- blurred background -->
+  <div class="wait-circle">
+    <span id="wait-time-number">--</span> min
+  </div>
+</div>
+
 <script>
 (function() {
   const sections = document.querySelectorAll('.section');
@@ -1209,11 +1270,7 @@ function changeQty(name, delta) {
   openCart(); // re-render
 }
 
-function closeCart() {
-  document.getElementById('cart-modal').style.display = 'none';
-}
-
-function sendOrder() {
+function closeCart() function sendOrder() {
   const keys = Object.keys(cart);
   if (keys.length === 0) {
     alert("Panier vide !");
@@ -1223,40 +1280,113 @@ function sendOrder() {
   let total = 0;
   const items = keys.map(name => {
     const item = cart[name];
-    const numPrice = parseFloat(item.price);
-    total += numPrice * item.qty;
-    return { name: name, qty: item.qty, price: numPrice };
+    const lineTotal = item.price * item.qty;
+    total += lineTotal;
+    return {
+      name: item.name,
+      qty: item.qty,
+      price: item.price,
+      notes: item.notes || "",
+      total: lineTotal
+    };
   });
 
-  const notes = document.getElementById('order-notes').value || '';
-
   fetch(`${BACKEND_URL}/send-order`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      table: TABLE_NUMBER,
-      items: items,
-      total: total,
-      notes: notes          // ← send notes
-    })
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ items, total, table_number: TABLE_NUMBER })
   })
-  .then(r => {
-    if (!r.ok) throw new Error("Server responded " + r.status);
-    return r.json();
-  })
+  .then(r => r.json())
   .then(data => {
-    alert("✅ Commande #" + data.order_no + " envoyée au serveur pour validation !");
-    Object.keys(cart).forEach(k => delete cart[k]);
-    updateCartBadge();
-    document.getElementById('order-notes').value = '';   // clear notes
-    closeCart();
+    if (data.status === 'ok') {
+      let msg = `✅ Commande #${data.order_no} envoyée au serveur pour validation !`;
+      if (data.estimated_wait_min !== undefined) {
+        msg += `\n⏱️ Temps d’attente estimé : ${data.estimated_wait_min} min`;
+      }
+      
+      // Display in the wait-time div instead of alert
+      document.getElementById('wait-time').textContent = msg;
+      
+      // Clear cart, update badge, close modal
+      Object.keys(cart).forEach(k => delete cart[k]);
+      updateCartBadge();
+      closeCart();
+    }
   })
   .catch(err => {
     console.error(err);
     alert("Erreur d'envoi. Vérifiez votre connexion ou contactez le gérant.");
   });
 }
+  function sendOrder() {
+  // ----- 1️⃣ Guard: empty cart -----
+  const keys = Object.keys(cart);
+  if (keys.length === 0) {
+    alert("Panier vide !");
+    return;
+  }
 
+  // ----- 2️⃣ Build the items array and total -----
+  let total = 0;
+  const items = keys.map(name => {
+    const item = cart[name];
+    const lineTotal = item.price * item.qty;
+    total += lineTotal;
+    return {
+      name: item.name,
+      qty: item.qty,
+      price: item.price,
+      notes: item.notes || "",
+      total: lineTotal
+    };
+  });
+
+  // ----- 3️⃣ Send order to the backend -----
+  fetch(`${BACKEND_URL}/send-order`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ items, total, table_number: TABLE_NUMBER })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.status === 'ok') {
+      // ---- Build confirmation text (order number + wait) ----
+      let msg = `✅ Commande #${data.order_no} envoyée au serveur pour validation !`;
+      if (data.estimated_wait_min !== undefined) {
+        msg += `\n⏱️ Temps d’attente estimé : ${data.estimated_wait_min} min`;
+      }
+
+      // ---- Show the overlay with the waiting time ----
+      const overlay = document.getElementById('wait-overlay');
+      const timeSpan = document.getElementById('wait-time-number');
+
+      // Extract just the numeric minutes (e.g., "15") from the message
+      const waitMatch = msg.match(/(\d+)\s*min/);
+      if (waitMatch) {
+        timeSpan.textContent = waitMatch[1];   // e.g., "15"
+      } else {
+        timeSpan.textContent = "--";           // fallback if no number found
+      }
+
+      // Make the overlay visible (triggers CSS fade‑in)
+      overlay.classList.add('visible');
+
+      // Optional: auto‑hide after a few seconds (adjust or remove as you like)
+      setTimeout(() => {
+        overlay.classList.remove('visible');
+      }, 8000); // 8 seconds
+
+      // ---- Clean up the cart (same as before) ----
+      Object.keys(cart).forEach(k => delete cart[k]);
+      updateCartBadge();
+      closeCart();
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Erreur d'envoi. Vérifiez votre connexion ou contactez le gérant.");
+  });
+}
 
 
 </script>
