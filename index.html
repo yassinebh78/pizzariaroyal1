@@ -1270,70 +1270,24 @@ function changeQty(name, delta) {
   openCart(); // re-render
 }
 
-function closeCart() function sendOrder() {
-  const keys = Object.keys(cart);
-  if (keys.length === 0) {
-    alert("Panier vide !");
-    return;
-  }
-
-  let total = 0;
-  const items = keys.map(name => {
-    const item = cart[name];
-    const lineTotal = item.price * item.qty;
-    total += lineTotal;
-    return {
-      name: item.name,
-      qty: item.qty,
-      price: item.price,
-      notes: item.notes || "",
-      total: lineTotal
-    };
-  });
-
-  fetch(`${BACKEND_URL}/send-order`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ items, total, table_number: TABLE_NUMBER })
-  })
-  .then(r => r.json())
-  .then(data => {
-    if (data.status === 'ok') {
-      let msg = `✅ Commande #${data.order_no} envoyée au serveur pour validation !`;
-      if (data.estimated_wait_min !== undefined) {
-        msg += `\n⏱️ Temps d’attente estimé : ${data.estimated_wait_min} min`;
-      }
-      
-      // Display in the wait-time div instead of alert
-      document.getElementById('wait-time').textContent = msg;
-      
-      // Clear cart, update badge, close modal
-      Object.keys(cart).forEach(k => delete cart[k]);
-      updateCartBadge();
-      closeCart();
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Erreur d'envoi. Vérifiez votre connexion ou contactez le gérant.");
-  });
+function closeCart() {
+  document.getElementById('cart-modal').style.display = 'none';
 }
-  function sendOrder() {
-  // ----- 1️⃣ Guard: empty cart -----
+
+function sendOrder() {
   const keys = Object.keys(cart);
   if (keys.length === 0) {
     alert("Panier vide !");
     return;
   }
 
-  // ----- 2️⃣ Build the items array and total -----
   let total = 0;
   const items = keys.map(name => {
     const item = cart[name];
     const lineTotal = item.price * item.qty;
     total += lineTotal;
     return {
-      name: item.name,
+      name: item.name || name,  // Fix: use name if item.name missing
       qty: item.qty,
       price: item.price,
       notes: item.notes || "",
@@ -1341,7 +1295,6 @@ function closeCart() function sendOrder() {
     };
   });
 
-  // ----- 3️⃣ Send order to the backend -----
   fetch(`${BACKEND_URL}/send-order`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1350,33 +1303,26 @@ function closeCart() function sendOrder() {
   .then(r => r.json())
   .then(data => {
     if (data.status === 'ok') {
-      // ---- Build confirmation text (order number + wait) ----
       let msg = `✅ Commande #${data.order_no} envoyée au serveur pour validation !`;
       if (data.estimated_wait_min !== undefined) {
-        msg += `\n⏱️ Temps d’attente estimé : ${data.estimated_wait_min} min`;
+        msg += `\n⏱️ Temps d'attente estimé : ${data.estimated_wait_min} min`;
       }
 
-      // ---- Show the overlay with the waiting time ----
       const overlay = document.getElementById('wait-overlay');
       const timeSpan = document.getElementById('wait-time-number');
-
-      // Extract just the numeric minutes (e.g., "15") from the message
-      const waitMatch = msg.match(/(\d+)\s*min/);
-      if (waitMatch) {
-        timeSpan.textContent = waitMatch[1];   // e.g., "15"
+      
+      if (overlay && timeSpan) {
+        const waitMatch = msg.match(/(\d+)\s*min/);
+        timeSpan.textContent = waitMatch ? waitMatch[1] : "--";
+        overlay.classList.add('visible');
+        
+        setTimeout(() => {
+          overlay.classList.remove('visible');
+        }, 8000);
       } else {
-        timeSpan.textContent = "--";           // fallback if no number found
+        alert(msg);  // Fallback if overlay HTML not present
       }
 
-      // Make the overlay visible (triggers CSS fade‑in)
-      overlay.classList.add('visible');
-
-      // Optional: auto‑hide after a few seconds (adjust or remove as you like)
-      setTimeout(() => {
-        overlay.classList.remove('visible');
-      }, 8000); // 8 seconds
-
-      // ---- Clean up the cart (same as before) ----
       Object.keys(cart).forEach(k => delete cart[k]);
       updateCartBadge();
       closeCart();
@@ -1387,7 +1333,6 @@ function closeCart() function sendOrder() {
     alert("Erreur d'envoi. Vérifiez votre connexion ou contactez le gérant.");
   });
 }
-
 
 </script>
 </body>
