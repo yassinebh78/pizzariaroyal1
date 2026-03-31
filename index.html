@@ -731,6 +731,91 @@ h1 {
   gap: 8px;
 }
 
+.order-status-card {
+  position: fixed;
+  left: 20px;
+  right: 20px;
+  bottom: 146px;
+  z-index: 998;
+  background: rgba(255, 250, 244, 0.96);
+  color: #2c211c;
+  border: 1px solid #ead9c8;
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: 0 16px 34px rgba(0,0,0,0.18);
+  display: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.order-status-card.show {
+  display: block;
+}
+
+.order-status-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9b7257;
+  margin-bottom: 6px;
+}
+
+.order-status-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #2c211c;
+}
+
+.order-status-text {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #5c473b;
+  margin-top: 6px;
+}
+
+.order-status-meta {
+  font-size: 12px;
+  color: #7c6253;
+  margin-top: 6px;
+}
+
+.order-status-stages {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.order-stage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #7c6253;
+}
+
+.order-stage-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d8c4b3;
+  flex-shrink: 0;
+}
+
+.order-stage.active .order-stage-dot {
+  background: var(--main);
+}
+
+.order-stage.done .order-stage-dot {
+  background: #2e8b57;
+}
+
+.order-stage-label {
+  font-weight: 600;
+  color: inherit;
+}
+
 @media (max-width: 480px) {
   .modal-box {
     padding: 16px 14px 18px;
@@ -757,6 +842,13 @@ h1 {
   .item-note {
     min-height: 40px;
     font-size: 11.5px;
+  }
+
+  .order-status-card {
+    left: 14px;
+    right: 14px;
+    bottom: 138px;
+    padding: 13px 14px;
   }
 }
 </style>
@@ -1364,6 +1456,27 @@ h1 {
   </div>
 </div>
 
+<div id="order-status-card" class="order-status-card" aria-live="polite">
+  <div id="order-status-kicker" class="order-status-kicker"></div>
+  <div id="order-status-title" class="order-status-title"></div>
+  <div id="order-status-text" class="order-status-text"></div>
+  <div id="order-status-meta" class="order-status-meta"></div>
+  <div class="order-status-stages">
+    <div id="order-stage-received" class="order-stage">
+      <span class="order-stage-dot"></span>
+      <span class="order-stage-label">Commande recue</span>
+    </div>
+    <div id="order-stage-preparing" class="order-stage">
+      <span class="order-stage-dot"></span>
+      <span class="order-stage-label">Preparation</span>
+    </div>
+    <div id="order-stage-ready" class="order-stage">
+      <span class="order-stage-dot"></span>
+      <span class="order-stage-label">Pret</span>
+    </div>
+  </div>
+</div>
+
 <div id="customize-modal" class="modal-overlay" onclick="if(event.target===this)closeCustomizationModal()">
   <div class="modal-box">
     <div class="modal-header">
@@ -1456,6 +1569,8 @@ const params = new URLSearchParams(window.location.search);
 const TABLE_NUMBER = params.get('table') || '?';
 const BACKEND_URL = "https://pizza-royal-backend.onrender.com"; // ← YOUR URL HERE
 let noticeTimer;
+let currentOrderNumber = null;
+let orderStatusPollTimer = null;
 const PIZZAS = [
   {
     title: 'Margherita',
@@ -1845,6 +1960,143 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 1800);
 }
 
+function formatEstimatedTime(value) {
+  if (!value) {
+    return '';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  return date.toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function setStageState(stageId, state) {
+  const stage = document.getElementById(stageId);
+  if (!stage) {
+    return;
+  }
+
+  stage.classList.remove('done', 'active');
+  if (state === 'done') {
+    stage.classList.add('done');
+  } else if (state === 'active') {
+    stage.classList.add('active');
+  }
+}
+
+function renderOrderStatusCard(order) {
+  const card = document.getElementById('order-status-card');
+  const kicker = document.getElementById('order-status-kicker');
+  const title = document.getElementById('order-status-title');
+  const text = document.getElementById('order-status-text');
+  const meta = document.getElementById('order-status-meta');
+  if (!card || !kicker || !title || !text || !meta) {
+    return;
+  }
+
+  const status = order && order.status ? order.status : 'received';
+  const orderNumber = order && order.order_no ? order.order_no : currentOrderNumber;
+  const waitingMinutes = order && order.waiting_time_minutes ? Number(order.waiting_time_minutes) : null;
+  const estimatedTime = formatEstimatedTime(order && order.estimated_ready_at);
+
+  kicker.textContent = orderNumber ? `Commande #${orderNumber}` : 'Commande';
+  meta.textContent = '';
+
+  if (status === 'received') {
+    title.textContent = 'Commande recue';
+    text.textContent = 'Votre commande a ete envoyee au restaurant.';
+    setStageState('order-stage-received', 'active');
+    setStageState('order-stage-preparing', '');
+    setStageState('order-stage-ready', '');
+  } else if (status === 'accepted') {
+    title.textContent = 'Commande acceptee';
+    text.textContent = 'Le restaurant a confirme votre commande.';
+    setStageState('order-stage-received', 'done');
+    setStageState('order-stage-preparing', 'active');
+    setStageState('order-stage-ready', '');
+  } else if (status === 'preparing') {
+    title.textContent = 'Commande acceptee';
+    text.textContent = waitingMinutes
+      ? `Temps de preparation estime : ${waitingMinutes} minutes`
+      : 'Votre commande est en preparation.';
+    if (estimatedTime) {
+      meta.textContent = `Prevue vers ${estimatedTime}`;
+    }
+    setStageState('order-stage-received', 'done');
+    setStageState('order-stage-preparing', 'active');
+    setStageState('order-stage-ready', '');
+  } else if (status === 'ready') {
+    title.textContent = 'Commande prete';
+    text.textContent = 'Votre commande est prete.';
+    setStageState('order-stage-received', 'done');
+    setStageState('order-stage-preparing', 'done');
+    setStageState('order-stage-ready', 'active');
+  } else if (status === 'refused') {
+    title.textContent = 'Commande refusee';
+    text.textContent = 'Le restaurant ne peut pas traiter cette commande.';
+    setStageState('order-stage-received', 'done');
+    setStageState('order-stage-preparing', '');
+    setStageState('order-stage-ready', '');
+  } else {
+    title.textContent = 'Commande en cours';
+    text.textContent = 'Nous mettons a jour le statut de votre commande.';
+    setStageState('order-stage-received', 'active');
+    setStageState('order-stage-preparing', '');
+    setStageState('order-stage-ready', '');
+  }
+
+  card.classList.add('show');
+}
+
+function stopOrderStatusPolling() {
+  if (orderStatusPollTimer) {
+    clearTimeout(orderStatusPollTimer);
+    orderStatusPollTimer = null;
+  }
+}
+
+function pollOrderStatus() {
+  if (!currentOrderNumber) {
+    return;
+  }
+
+  fetch(`${BACKEND_URL}/order-status/${currentOrderNumber}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Status responded ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(order => {
+      renderOrderStatusCard(order);
+      stopOrderStatusPolling();
+      if (order.status !== 'refused' && order.status !== 'ready') {
+        orderStatusPollTimer = setTimeout(pollOrderStatus, 5000);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      stopOrderStatusPolling();
+      orderStatusPollTimer = setTimeout(pollOrderStatus, 8000);
+    });
+}
+
+function startOrderStatusPolling(orderNo) {
+  currentOrderNumber = Number(orderNo);
+  stopOrderStatusPolling();
+  renderOrderStatusCard({
+    order_no: currentOrderNumber,
+    status: 'received'
+  });
+  pollOrderStatus();
+}
+
 function cloneSupplements(supplements) {
   return (supplements || []).map(supplement => ({
     name: supplement.name,
@@ -2196,6 +2448,7 @@ function sendOrder() {
   })
   .then(data => {
     showNotice("Commande #" + data.order_no + " envoyÃ©e au serveur pour validation.");
+    startOrderStatusPolling(data.order_no);
     cart.length = 0;
     updateCartBadge();
     resetSendOrderButton();
